@@ -10,7 +10,7 @@ export default function SearchMissingChild() {
   return (
     <div style={{ display: "block", width: "80%", padding: 20 }}>
       <h4>Iam Searching For A Child</h4>
-      <Tabs defaultActiveKey="Quick Search" fill variant="tabs">
+      <Tabs defaultActiveKey="Quick search" fill variant="tabs">
 
         {/* Quick Search */}
         <Tab eventKey="Quick search" title="Quick Search">
