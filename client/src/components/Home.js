@@ -6,6 +6,8 @@ import Dashboard from './Dashboard';
 import Logout from './Logout';
 import EditProfile from './EditProfile';
 import Account from './Account';
+import SignIn from './Signin';
+import SignUp from './Signup';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import {
   BrowserRouter as Router,
@@ -33,6 +35,12 @@ function Home() {
               <Nav.Item>
                 <Link to="/searchmissingchild" className="nav-link">Search A Missing Child</Link>
               </Nav.Item>
+              <Nav.Item>
+                <Link to="/signin" className="nav-link">Sign in</Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Link to="/signup" className="nav-link">Sign up</Link>
+              </Nav.Item>
               <NavDropdown title={<Avatar name="Sandeep Gogarla" size={30} round />} id="basic-nav-dropdown">
                 <NavDropdown.Item href="/dashboard">Dashboard</NavDropdown.Item>
                 <NavDropdown.Divider />
@@ -54,6 +62,8 @@ function Home() {
           <Route exact path="/myaccount" element={<Account />} />
           <Route exact path="/editprofile" element={<EditProfile />} />
           <Route exact path="/logout" element={<Logout />} />
+          <Route exact path="/signin" element={<SignIn />} />
+          <Route exact path="/signup" element={<SignUp />} />
         </Routes>
       </div>
     </Router>
