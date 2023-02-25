@@ -23,7 +23,7 @@ export default function SearchMissingChild() {
             <Form>
               <Form.Group controlId="fName">
                 <Form.Label>Name:</Form.Label>
-                <Form.Control type="text" placeholder="Enter full name" id="fName" />
+                <Form.Control type="text" placeholder="Enter full name" />
               </Form.Group>
               <Form.Group controlId="gender">
                 <Form.Label>Gender:</Form.Label>
@@ -34,28 +34,28 @@ export default function SearchMissingChild() {
                       label="Male"
                       name="group1"
                       type={type}
-                      id={`inline-${type}-1`}
+                      
                     />
                     <Form.Check
                       inline
                       label="Female"
                       name="group1"
                       type={type}
-                      id={`inline-${type}-2`}
+                      
                     />
                     <Form.Check
                       inline
                       label="Others"
                       name="group1"
                       type={type}
-                      id={`inline-${type}-3`}
+                      
                     />
                   </div>
                 ))}
               </Form.Group>
               <Form.Group controlId="age">
                 <Form.Label>Age in Years:</Form.Label>
-                <Form.Control type="number" placeholder="Enter Age" id="age" />
+                <Form.Control type="number" placeholder="Enter Age" />
               </Form.Group>
               <Button variant="primary" type="submit">
                 Quick Search
@@ -75,7 +75,7 @@ export default function SearchMissingChild() {
             <Form>
               <Form.Group controlId="childId">
                 <Form.Label>Child ID:</Form.Label>
-                <Form.Control type="text" placeholder="Enter child ID" id="childId" />
+                <Form.Control type="text" placeholder="Enter child ID"  />
               </Form.Group>
               <Button variant="primary" type="submit" align='center'>
                 Search By Child ID

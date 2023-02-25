@@ -1,0 +1,17 @@
+.custom-nav {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+    font-size: 1.2rem;
+  }
+  
+  .custom-nav .nav-link {
+    color: #fff;
+    margin-left: 1rem;
+  }
+  
+  .custom-nav .nav-link:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+  
