@@ -1,13 +1,12 @@
 import Home from "./components/Home";
 import SignIn from "./components/Signin";
 import SignUp from "./components/Signup";
-import MyChildMissing from "./components/MyChildMissing";
-import IHaveSightedChild from "./components/IHaveSightedChild";
+import SearchMissingChild from "./components/SearchMissingChild";
 
 function App() {
   return (
     <>
-    <IHaveSightedChild/>
+    <SearchMissingChild/>
     </>
   );
 }
