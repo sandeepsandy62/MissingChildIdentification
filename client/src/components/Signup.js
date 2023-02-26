@@ -3,6 +3,7 @@ import { Form, Button, Container } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "./styles/SignUp.css";
+import axios from 'axios';
 
 const Signup = () => {
   const [firstName, setFirstName] = useState("");
@@ -22,27 +23,34 @@ const Signup = () => {
     setImage(file);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+  
     const formData = new FormData();
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
     formData.append("mobileNumber", mobileNumber);
     formData.append("aadharNumber", aadharNumber);
     formData.append("address", address);
+    formData.append("image", image);
     formData.append("state", state);
     formData.append("email", email);
     formData.append("password", password);
     formData.append("pincode", pincode);
     formData.append("district", district);
-    formData.append("image", image);
   
-    const data = {};
-    for (let [key, value] of formData.entries()) {
-      data[key] = value;
+    try {
+      const response = await axios.post("http://localhost:8000/signup", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
     }
-    console.log(data);
   };
+  
   
   
 
@@ -103,9 +111,10 @@ const Signup = () => {
             </Form.Group>
 
             <Form.Group controlId="formImage">
-              <Form.Label>Upload Image</Form.Label>
-              <Form.Control type="file" onChange={handleImageUpload} />
-            </Form.Group>
+    <Form.Label>Upload Image</Form.Label>
+    <Form.Control type="file" onChange={handleImageUpload} />
+  </Form.Group>
+
           </Col>
           <Col md={6}>
             <Form.Group controlId="formState">
