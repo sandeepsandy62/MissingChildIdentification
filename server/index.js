@@ -1,116 +1,47 @@
-const express = require('express');
-const app = express();
-const cors = require('cors');
-const bodyParser = require('body-parser')
-const multer = require('multer');
-const upload = multer();
-const mongoose = require('mongoose');
-const User = require('./schemas/userschema');
+const http = require('http');
+const app = require('./app');
 
-// Set up database connection
-const { MongoClient } = require('mongodb');
+const normalizePort = val => {
+  const port = parseInt(val, 10);
 
-const insertUser = async (user) => {
-  const uri = process.env.MONGO_URI;
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  if (isNaN(port)) {
+    return val;
+  }
+  if (port >= 0) {
+    return port;
+  }
+  return false;
+};
+const port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
 
-  try {
-    // Connect to the MongoDB cluster
-    await client.connect();
-
-    // Access the UsersDatabase database
-    const db = client.db('UsersDatabase');
-
-    // Insert the user data into the Users collection
-    const result = await db.collection('Users').insertOne(user);
-
-    console.log(`Inserted user with id ${result.insertedId}`);
-  } catch (e) {
-    console.error(e);
-  } finally {
-    // Close the connection to the MongoDB cluster
-    await client.close();
+const errorHandler = error => {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+  const address = server.address();
+  const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges.');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use.');
+      process.exit(1);
+      break;
+    default:
+      throw error;
   }
 };
 
+const server = http.createServer(app);
 
-
-app.use(cors())
-app.use(bodyParser.json())
-
-const Link = "http://localhost:8000/";
-
-
-//Home Route
-app.get("/", (req, res) => {
-  res.send('<h1>Hi!!</h1>');
+server.on('error', errorHandler);
+server.on('listening', () => {
+  const address = server.address();
+  const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
+  console.log('Listening on ' + bind);
 });
 
-//Sign In Route
-app.post("/signin", (req, res) => {
-  const { email, password } = req.body;
-  console.log("email: ", email);
-  console.log("password: ", password);
-});
-
-
-//Sign Up Route
-app.post("/signup", upload.single("image"), (req, res) => {
-    const {
-      firstName,
-      lastName,
-      mobileNumber,
-      aadharNumber,
-      address,
-      state,
-      email,
-      password,
-      pincode,
-      district,
-    } = req.body;
-  
-    const image = req.file;
-  
-    console.log("First Name : ", firstName);
-    console.log("Last Name : ", lastName);
-    console.log("Mobile Number : ", mobileNumber);
-    console.log("Aadhar Number : ", aadharNumber);
-    console.log("Image : ", image);
-    console.log("State : ", state);
-    console.log("Address : ", address);
-    console.log("Email : ", email);
-    console.log("Password : ", password);
-    console.log("Pincode : ", pincode);
-    console.log("District : ", district);
-  
-    const newUser = {
-      firstName,
-      lastName,
-      mobileNumber,
-      aadharNumber,
-      address,
-      state,
-      email,
-      password,
-      pincode,
-      district,
-      image: { data: image.buffer, contentType: image.mimetype }
-    };
-  
-    const insertUser = async (user) => {
-        try {
-          const newUser = new User(user);
-          const result = await newUser.save();
-          console.log(`Inserted user with id ${result._id}`);
-        } catch (err) {
-          console.error(err);
-          throw err; // re-throw the error to the caller
-        }
-      };
-      
-  });
-  
-
-app.listen(8000, () => {
-  console.log(`Port listening on ${Link}`);
-});
+server.listen(port);
