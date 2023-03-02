@@ -11,44 +11,42 @@ const Signup = () => {
   const [mobileNumber, setMobileNumber] = useState("");
   const [aadharNumber, setAadharNumber] = useState("");
   const [address, setAddress] = useState("");
-  const [image, setImage] = useState(null);
   const [state, setState] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [pincode, setPincode] = useState("");
   const [district, setDistrict] = useState("");
-
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    setImage(file);
-  };
+  const [register,setRegister] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
-    const formData = new FormData();
-    formData.append("firstName", firstName);
-    formData.append("lastName", lastName);
-    formData.append("mobileNumber", mobileNumber);
-    formData.append("aadharNumber", aadharNumber);
-    formData.append("address", address);
-    formData.append("image", image);
-    formData.append("state", state);
-    formData.append("email", email);
-    formData.append("password", password);
-    formData.append("pincode", pincode);
-    formData.append("district", district);
-  
-    try {
-      const response = await axios.post("http://localhost:8000/signup", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
+
+    //set configurations
+    const configuration = {
+      method: "post",
+      url: "http://localhost:5000/signup",
+      data:{
+        firstName,
+        lastName,
+        email,
+        password,
+        mobileNumber,
+        aadharNumber,
+        address,
+        pincode,
+        district,
+        state,
+      },
     }
+
+    //make the API call
+    axios(configuration)
+    .then((result)=>{
+      setRegister(true);
+    })
+    .catch((error) => {
+      error = new Error();
+    })
   };
   
   
@@ -60,6 +58,7 @@ const Signup = () => {
         <h1>Sign Up</h1>
         <Row className="justify-content-center">
           <Col md={6}>
+            {/* firstName */}
             <Form.Group controlId="formFirstName">
               <Form.Label>First Name</Form.Label>
               <Form.Control
@@ -70,6 +69,7 @@ const Signup = () => {
               />
             </Form.Group>
 
+            {/* Last Name */}
             <Form.Group controlId="formLastName">
               <Form.Label>Last Name</Form.Label>
               <Form.Control
@@ -80,53 +80,7 @@ const Signup = () => {
               />
             </Form.Group>
 
-            <Form.Group controlId="formMobileNumber">
-              <Form.Label>Mobile Number</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter mobile number"
-                value={mobileNumber}
-                onChange={(event) => setMobileNumber(event.target.value)}
-              />
-            </Form.Group>
-
-            <Form.Group controlId="formAadharNumber">
-              <Form.Label>Aadhar Number</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter Aadhar number"
-                value={aadharNumber}
-                onChange={(event) => setAadharNumber(event.target.value)}
-              />
-            </Form.Group>
-
-            <Form.Group controlId="formAddress">
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter address"
-                value={address}
-                onChange={(event) => setAddress(event.target.value)}
-              />
-            </Form.Group>
-
-            <Form.Group controlId="formImage">
-    <Form.Label>Upload Image</Form.Label>
-    <Form.Control type="file" onChange={handleImageUpload} />
-  </Form.Group>
-
-          </Col>
-          <Col md={6}>
-            <Form.Group controlId="formState">
-              <Form.Label>State</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter state"
-                value={state}
-                onChange={(event) => setState(event.target.value)}
-              />
-            </Form.Group>
-
+            {/* Email */}
             <Form.Group controlId="formEmail">
               <Form.Label>Email Address</Form.Label>
               <Form.Control
@@ -137,6 +91,7 @@ const Signup = () => {
               />
             </Form.Group>
 
+            {/* Password */}
             <Form.Group controlId="formPassword">
               <Form.Label>Password</Form.Label>
               <Form.Control
@@ -147,6 +102,44 @@ const Signup = () => {
               />
             </Form.Group>
 
+            {/* Mobile Number */}
+            <Form.Group controlId="formMobileNumber">
+              <Form.Label>Mobile Number</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter mobile number"
+                value={mobileNumber}
+                onChange={(event) => setMobileNumber(event.target.value)}
+              />
+            </Form.Group>
+
+          </Col>
+          <Col md={6}>
+
+            {/* AadharNumber */}
+            <Form.Group controlId="formAadharNumber">
+              <Form.Label>Aadhar Number</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Aadhar number"
+                value={aadharNumber}
+                onChange={(event) => setAadharNumber(event.target.value)}
+              />
+            </Form.Group>
+
+            {/* Address */}
+            <Form.Group controlId="formAddress">
+              <Form.Label>Address</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter address"
+                value={address}
+                onChange={(event) => setAddress(event.target.value)}
+              />
+            </Form.Group>
+
+            
+            {/* pincode */}
             <Form.Group controlId="formPincode">
               <Form.Label>Pincode</Form.Label>
               <Form.Control
@@ -156,7 +149,9 @@ const Signup = () => {
                 onChange={(event) => setPincode(event.target.value)}
               />
             </Form.Group>
-            <Form.Group controlId="formDistrict">
+
+             {/* district */}
+             <Form.Group controlId="formDistrict">
               <Form.Label>District</Form.Label>
               <Form.Control
                 type="text"
@@ -165,15 +160,33 @@ const Signup = () => {
                 onChange={(event) => setDistrict(event.target.value)}
               />
             </Form.Group>
+
+            {/* State */}
+            <Form.Group controlId="formState">
+              <Form.Label>State</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter state"
+                value={state}
+                onChange={(event) => setState(event.target.value)}
+              />
+            </Form.Group>
+
           </Col>
 
           <Col md={12}>
             <Form.Group controlId="formSubmit">
               <Button variant="primary" type="submit" style={{"margin":"10px"}}>
-                Submit
+                Sign Up
               </Button>
             </Form.Group>
           </Col>
+          {/* display success message */}
+          {register?(
+            <p className="text-success">You are Registered Successfully</p>
+          ):(
+            <p className="text-danger">You are not Registered</p>
+          )}
         </Row>
       </Form>
     </div>

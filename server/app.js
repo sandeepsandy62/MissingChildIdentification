@@ -26,6 +26,7 @@ app.use((req,res,next)=>{
         "GET,POST,PUT,DELETE,PATCH,OPTIONS"
     );
     next();
+    return true;
 })
 
 const User = require("./db/userModel");
@@ -45,7 +46,7 @@ app.get("/auth-endpoint",auth,(request,response)=>{
 });
 
 //register endpoint
-app.post("/register",(request,response) => {
+app.post("/signup",(request,response) => {
     //hash the password
     bcrypt.hash(request.body.password,10)
     .then((hashedPassword)=>{
@@ -90,7 +91,7 @@ app.post("/register",(request,response) => {
 });
 
 //login endpoint
-app.post("/login",(request,response)=>{
+app.post("/signin",(request,response)=>{
     //check if email exists
     User.findOne({email:request.body.email})
 

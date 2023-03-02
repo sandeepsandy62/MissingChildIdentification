@@ -7,20 +7,29 @@ function Signin() {
 
   const [email,setEmail] = useState('');
   const [password,setPassword] = useState('');
-
+  const [login,setLogin] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    try {
-      const response = await axios.post('http://localhost:8000/signin',{
+    //set configurations
+    const configuration = {
+      method: "post",
+      url: "http://localhost:5000/signin",
+      data:{
         email,
-        password
-      })
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
+        password,
+      },
     }
+    
+    //make the API call
+    axios(configuration)
+    .then((result)=>{
+      setLogin(true);
+    })
+    .catch((error)=>{
+      error = new Error();
+    })
 
   };
 
@@ -68,6 +77,14 @@ const handleSignUp = () => {
             </div>
           </Form>
         </Col>
+        {/* display success message */}
+        {
+          login?(
+            <p className='text-success'>You are Logged in Successfully</p>
+          ):(<p className='text-danger'>
+            You are not Logged in
+          </p>)
+        }
       </Row>
     </Container>
   );
