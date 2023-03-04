@@ -1,1 +1,3 @@
 Backend Register and Login Functionality : https://www.freecodecamp.org/news/how-to-build-a-fullstack-authentication-system-with-react-express-mongodb-heroku-and-netlify/
+Token storage implementations : https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications
+React Tutorials : https://www.digitalocean.com/community/tags/react

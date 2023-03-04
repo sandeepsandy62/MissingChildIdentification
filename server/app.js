@@ -122,7 +122,7 @@ app.post("/signin",(request,response)=>{
             //return success response
             response.status(200).send({
                 message:"Login Successful",
-                emial:user.email,
+                email:user.email,
                 token,
             })
         })

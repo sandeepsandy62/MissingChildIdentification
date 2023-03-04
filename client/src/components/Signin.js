@@ -2,34 +2,32 @@ import React from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
-function Signin() {
+async function loginUser(credentials) {
+  try {
+    const response = await axios.post('http://localhost:5000/signin', credentials);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export default function Signin({setToken}) {
 
   const [email,setEmail] = useState('');
   const [password,setPassword] = useState('');
-  const [login,setLogin] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    //set configurations
-    const configuration = {
-      method: "post",
-      url: "http://localhost:5000/signin",
-      data:{
-        email,
-        password,
-      },
-    }
     
-    //make the API call
-    axios(configuration)
-    .then((result)=>{
-      setLogin(true);
+
+    const token = await loginUser({
+      email,
+      password
     })
-    .catch((error)=>{
-      error = new Error();
-    })
+    setToken(token)
 
   };
 
@@ -77,16 +75,11 @@ const handleSignUp = () => {
             </div>
           </Form>
         </Col>
-        {/* display success message */}
-        {
-          login?(
-            <p className='text-success'>You are Logged in Successfully</p>
-          ):(<p className='text-danger'>
-            You are not Logged in
-          </p>)
-        }
       </Row>
     </Container>
   );
 }
-export default Signin;
+
+Signin.propTypes = {
+  setToken: PropTypes.func.isRequired
+};
