@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Form, Button, Container } from "react-bootstrap";
+import { Form, Button} from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "./styles/SignUp.css";
 import axios from 'axios';
 
-const Signup = () => {
+const Signup = ({setShowSignUp}) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
@@ -43,6 +43,7 @@ const Signup = () => {
     axios(configuration)
     .then((result)=>{
       setRegister(true);
+      setShowSignUp(false);
     })
     .catch((error) => {
       error = new Error();

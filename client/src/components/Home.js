@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState } from 'react';
 import SearchMissingChild from "./SearchMissingChild";
 import MyChildMissing from "./MyChildMissing";
 import IHaveSightedChild from "./IHaveSightedChild";
@@ -6,6 +6,7 @@ import Dashboard from './Dashboard';
 import EditProfile from './EditProfile';
 import Account from './Account';
 import SignIn from './Signin';
+import SignUp from './Signup';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import useToken from './utils/useToken';
 import {
@@ -16,37 +17,22 @@ import {
 } from 'react-router-dom';
 import Avatar from 'react-avatar';
 
-
-// function setToken(userToken){
-//   sessionStorage.setItem('token',JSON.stringify(userToken));
-// }
-
-// function getToken(){
-//   const tokenString = sessionStorage.getItem('token');
-//   const userToken = JSON.parse(tokenString);
-//   return userToken?.token
-// }
-
-//logout
-// const clearToken = () => {
-//   sessionStorage.removeItem('token');
-//   setToken(null);
-// };
-
 function Home() {
 
-  const { token,setToken,clearToken} = useToken();
-  // const token = getToken();
+  const { token, setToken, clearToken } = useToken();
+  const [showSignUp, setShowSignUp] = useState(false);
 
-  if(!token){
-    return <SignIn setToken = {setToken} />
+  if (!token) {
+    if (showSignUp) {
+      return <SignUp setShowSignUp={setShowSignUp} />;
+    } else {
+      return <SignIn setShowSignUp={setShowSignUp} setToken={setToken} />;
+    }
   }
 
   const handleLogout = () => {
     clearToken();
-};
-  
-
+  };
 
   return (
     <Router>
@@ -78,13 +64,14 @@ function Home() {
           </Navbar.Collapse>
         </Navbar>
         <Routes>
-          <Route exact path="/" element={<MyChildMissing/>} />
+          <Route exact path="/" element={<MyChildMissing />} />
           <Route exact path="/mychildmissing" element={<MyChildMissing />} />
           <Route exact path="/searchmissingchild" element={<SearchMissingChild />} />
           <Route exact path="/ihavesightedchild" element={<IHaveSightedChild />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/myaccount" element={<Account />} />
           <Route exact path="/editprofile" element={<EditProfile />} />
+          {/* <Route exact path="/signup" element={<SignUp setShowSignUp={setShowSignUp}/>} /> */}
         </Routes>
       </div>
     </Router>

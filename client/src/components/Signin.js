@@ -13,7 +13,7 @@ async function loginUser(credentials) {
   }
 }
 
-export default function Signin({setToken}) {
+export default function Signin({setShowSignUp , setToken}) {
 
   const [email,setEmail] = useState('');
   const [password,setPassword] = useState('');
@@ -31,11 +31,11 @@ export default function Signin({setToken}) {
 
   };
 
+  function handleSignUp(){
+    setShowSignUp(true);
+  }
 
 
-const handleSignUp = () => {
-  
-}
 
 
   return (
@@ -71,7 +71,7 @@ const handleSignUp = () => {
             </Button>
 
             <div className="text-center">
-              <Button variant="link" onClick={handleSignUp}>Don't have an account? Sign up</Button>
+              <Button className='btn btn-primary' onClick={handleSignUp}>Don't have an account? Sign up</Button>
             </div>
           </Form>
         </Col>
