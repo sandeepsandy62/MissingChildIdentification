@@ -15,7 +15,7 @@ import {
   Link
 } from 'react-router-dom';
 import Avatar from 'react-avatar';
-// import useToken from './utils/useToken';
+
 
 // function setToken(userToken){
 //   sessionStorage.setItem('token',JSON.stringify(userToken));
@@ -27,9 +27,16 @@ import Avatar from 'react-avatar';
 //   return userToken?.token
 // }
 
+//logout
+// const clearToken = () => {
+//   sessionStorage.removeItem('token');
+//   setToken(null);
+// };
+
 function Home() {
 
   const { token,setToken,clearToken} = useToken();
+  // const token = getToken();
 
   if(!token){
     return <SignIn setToken = {setToken} />
@@ -37,7 +44,6 @@ function Home() {
 
   const handleLogout = () => {
     clearToken();
-    // additional logout logic here
 };
   
 

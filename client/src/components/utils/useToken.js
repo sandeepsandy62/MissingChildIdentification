@@ -1,15 +1,27 @@
 import {useState} from 'react';
 
 export default function useToken(){
-    // easier to read when top-level functions are standard 
+
+      // easier to read when top-level functions are standard 
     //and internal functions are arrow functions
-    const getToken = () => {
-        const tokenString = localStorage.getItem('token');
-        const userToken = JSON.parse(tokenString);
+    // const getToken = () => {
+    //     const tokenString = localStorage.getItem('token');
+    //     const userToken = tokenString ? JSON.parse(tokenString) : null;
         // ?. (optional chaining operator) when accessing the token property
   //becoz when you first acess the application , the value of sessionStorage.getItem('token') will be undefined. If you try to access a property, you will generate an error.
-        return userToken?.token
-    };
+    //     return userToken?.token
+    // };
+
+    const getToken = () => {
+        const tokenString = localStorage.getItem('token');
+        try {
+          const userToken = JSON.parse(tokenString);
+          return userToken.token;
+        } catch (error) {
+          return null;
+        }
+    }
+
 
     const [token,setToken] = useState(getToken());
 
@@ -35,3 +47,6 @@ export default function useToken(){
         token
     }
 }
+
+
+
