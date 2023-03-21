@@ -20,15 +20,11 @@ export default function Signin({setShowSignUp , setToken}) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    
-
     const token = await loginUser({
       email,
       password
     })
     setToken(token)
-
   };
 
   function handleSignUp(){

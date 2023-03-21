@@ -1,35 +1,121 @@
-import React from 'react';
+import React from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { Alert } from 'react-bootstrap';
-
+import { Alert, Button } from "react-bootstrap";
+import { useState } from "react";
+import axios from "axios";
 
 function IHaveSightedChild() {
+  const [basicDetails, setBasicDetails] = useState({
+    name: "",
+    dateOfSighting: "",
+    description: "",
+    gender: "male",
+    reason: "",
+  });
+
+  const [locationDetails, setLocationDetails] = useState({
+    sightedState: "",
+    sightedDistrict: "",
+    sightedAddress: "",
+    sightedPincode: "",
+  });
+
+  const [uploadMedia, setUploadMedia] = useState('');
+
+  const handleBasicDetailsChange = (event) => {
+    setBasicDetails({
+      ...basicDetails,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const handleLocationDetailsChange = (event) => {
+    setLocationDetails({
+      ...locationDetails,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const handleUploadMediaChange = (event) => {
+    setUploadMedia(event.target.files[0]);
+    
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+  
+    const reader = new FileReader();
+    reader.readAsDataURL(uploadMedia);
+    reader.onloadend = async () => {
+      const base64Data = reader.result.replace(/^data:(.*;base64,)?/, "");
+  
+      const data = {
+        basicDetails: {
+          name: basicDetails.name,
+          dateOfSighting: basicDetails.dateOfSighting,
+          description: basicDetails.description,
+          gender: basicDetails.gender,
+          reason: basicDetails.reason,
+        },
+        locationDetails: {
+          sightedAddress: locationDetails.sightedAddress,
+          sightedDistrict: locationDetails.sightedDistrict,
+          sightedPincode: locationDetails.sightedPincode,
+          sightedState: locationDetails.sightedState,
+        },
+        uploadMedia: base64Data,
+        contentType: uploadMedia.type,
+      };
+  
+      try {
+        const response = await axios.post("http://localhost:5000/sightedChild", data);
+  
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  };
+  
+
+  
+
   return (
     <div style={{ display: "block", width: "80%", padding: 20 }}>
       <h4>I Have Sighted A Child</h4>
       <Tabs defaultActiveKey="basicDetails" fill variant="tabs">
         {/* Basic Details */}
         <Tab eventKey="basicDetails" title="Basic Details">
-          <Form>
+          <Form onSubmit={handleSubmit} encType="multipart/form-data">
             <Row>
               <Col md={6}>
                 {/* Name */}
                 <Form.Group className="mb-3" controlId="formName">
                   <Form.Label>Name</Form.Label>
-                  <Form.Control type="text" placeholder="Missing Child Name" />
+                  <Form.Control
+                    type="text"
+                    placeholder="Missing Child Name"
+                    name="name"
+                    value={basicDetails.name}
+                    onChange={handleBasicDetailsChange}
+                  />
                 </Form.Group>
 
                 {/* Date of Sighting */}
                 <Form.Group className="mb-3" controlId="dateOfSighting">
-                  <Form.Label>Date of Missing</Form.Label>
-                  <Form.Control type="date" />
+                  <Form.Label>Date of Sighting</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="dateOfSighting"
+                    value={basicDetails.dateOfSighting}
+                    onChange={handleBasicDetailsChange}
+                  />
                 </Form.Group>
-
 
                 {/* Description */}
                 <Form.Group className="mb-3" controlId="description">
@@ -37,47 +123,26 @@ function IHaveSightedChild() {
                   <Form.Control
                     as="textarea"
                     placeholder="Describe how the child was lost"
+                    name="description"
+                    value={basicDetails.description}
+                    onChange={handleBasicDetailsChange}
                   ></Form.Control>
                 </Form.Group>
               </Col>
               <Col md={6}>
-                {/* Mentally Ill */}
-                <Form.Group className="mb-3" controlId="mentallyIll">
-                  <Form.Label>Mentally ill</Form.Label>
-                  <div>
-                    <Form.Check
-                      inline
-                      type="radio"
-                      label="Yes"
-                      value="yes"
-                      name="mentallyIll"
-                      id="mentallyIllYes"
-                    />
-                    <Form.Check
-                      inline
-                      type="radio"
-                      label="No"
-                      value="no"
-                      name="mentallyIll"
-                      id="mentallyIllNo"
-                    />
-                  </div>
-                </Form.Group>
-
                 {/* Gender */}
                 <Form.Group className="mb-3" controlId="gender">
                   <Form.Label>Gender</Form.Label>
-                  <Form.Control as="select" name="gender">
+                  <Form.Control
+                    as="select"
+                    name="gender"
+                    value={basicDetails.gender}
+                    onChange={handleBasicDetailsChange}
+                  >
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="others">Others</option>
                   </Form.Control>
-                </Form.Group>
-
-                {/* Height */}
-                <Form.Group className="mb-3" controlId="approximateHeight">
-                  <Form.Label>Approximate Height</Form.Label>
-                  <Form.Control input="text" name="height"></Form.Control>
                 </Form.Group>
 
                 {/* Reason */}
@@ -86,47 +151,40 @@ function IHaveSightedChild() {
                   <Form.Control
                     as="textarea"
                     placeholder="Please explain the reason why you think child is lost"
+                    name="reason"
+                    value={basicDetails.reason}
+                    onChange={handleBasicDetailsChange}
                   ></Form.Control>
-                </Form.Group>
-
-                {/* Differently Abled */}
-                <Form.Group className="mb-3" controlId="differentlyAbled">
-                  <Form.Label>Differently Abled (Physical/Mental)</Form.Label>
-                  <div>
-                    <Form.Check
-                      inline
-                      type="radio"
-                      label="Yes"
-                      value="yes"
-                      name="differentlyAbledNo"
-                    />
-                    <Form.Check
-                      inline
-                      type="radio"
-                      label="No"
-                      value="no"
-                      name="differentlyAbled"
-                    />
-                  </div>
                 </Form.Group>
               </Col>
             </Row>
           </Form>
         </Tab>
 
-        
         {/* Location Details */}
         <Tab eventKey="locationDetails" title="Location Details">
-          <Form>
+          <Form onSubmit={handleSubmit} encType="multipart/form-data">
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="sightedState">
                   <Form.Label>SightedState</Form.Label>
-                  <Form.Control type="text" placeholder="state" />
+                  <Form.Control
+                    type="text"
+                    placeholder="state"
+                    name="sightedState"
+                    value={locationDetails.sightedState}
+                    onChange={handleLocationDetailsChange}
+                  />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="sightedDistrict">
                   <Form.Label>Sighted District</Form.Label>
-                  <Form.Control type="text" placeholder="district" />
+                  <Form.Control
+                    type="text"
+                    placeholder="district"
+                    name="sightedDistrict"
+                    value={locationDetails.sightedDistrict}
+                    onChange={handleLocationDetailsChange}
+                  />
                 </Form.Group>
               </Col>
               <Col md={6}>
@@ -135,36 +193,51 @@ function IHaveSightedChild() {
                   <Form.Control
                     type="text"
                     placeholder="H-No , street , village ..."
+                    name="sightedAddress"
+                    value={locationDetails.sightedAddress}
+                    onChange={handleLocationDetailsChange}
                   />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="sightedPincode">
                   <Form.Label>Sighted Pincode</Form.Label>
-                  <Form.Control type="text" />
+                  <Form.Control
+                    type="text"
+                    name="sightedPincode"
+                    value={locationDetails.sightedPincode}
+                    onChange={handleLocationDetailsChange}
+                  />
                 </Form.Group>
               </Col>
             </Row>
           </Form>
         </Tab>
 
-        {/* Upload Media */}
         <Tab eventKey="uploadMedia" title="Upload Media">
-          <Form>
+          <Form onSubmit={handleSubmit} encType="multipart/form-data">
             <Row>
               <Col md={12}>
                 <Alert variant="primary">
                   Upload JPG or PNG images under 2 MB.
                 </Alert>
                 <Form.Group>
-                <Form.Label>Choose a file to upload</Form.Label>
-                <Form.Control type="file"/>
-              </Form.Group>
+                  <Form.Label>Choose a file to upload</Form.Label>
+                  <Form.Control
+                    type="file"
+                    name="uploadMedia"
+                    onChange={handleUploadMediaChange}
+                  />
+                </Form.Group>
+                {/* Submit Button */}
+                <Form.Group className="mb-3" controlId="submit">
+                  <Button type="submit">Submit</Button>
+                </Form.Group>
               </Col>
             </Row>
           </Form>
         </Tab>
       </Tabs>
     </div>
-  )
+  );
 }
 
-export default IHaveSightedChild
+export default IHaveSightedChild;

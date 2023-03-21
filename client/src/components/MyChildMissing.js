@@ -8,6 +8,9 @@ import Col from "react-bootstrap/Col";
 import { Alert } from 'react-bootstrap';
 
 export default function MyChildMissing() {
+
+  
+
   return (
     <div style={{ display: "block", width: "80%", padding: 20 }}>
       <h4>My Child is Missing</h4>
@@ -35,39 +38,8 @@ export default function MyChildMissing() {
                   <Form.Control type="date" />
                 </Form.Group>
 
-                {/* Description */}
-                <Form.Group className="mb-3" controlId="description">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    placeholder="Describe how the child was lost"
-                  ></Form.Control>
-                </Form.Group>
               </Col>
               <Col md={6}>
-                {/* Mentally Ill */}
-                <Form.Group className="mb-3" controlId="mentallyIll">
-                  <Form.Label>Mentally ill</Form.Label>
-                  <div>
-                    <Form.Check
-                      inline
-                      type="radio"
-                      label="Yes"
-                      value="yes"
-                      name="mentallyIll"
-                      id="mentallyIllYes"
-                    />
-                    <Form.Check
-                      inline
-                      type="radio"
-                      label="No"
-                      value="no"
-                      name="mentallyIll"
-                      id="mentallyIllNo"
-                    />
-                  </div>
-                </Form.Group>
-
                 {/* Gender */}
                 <Form.Group className="mb-3" controlId="gender">
                   <Form.Label>Gender</Form.Label>
@@ -78,11 +50,6 @@ export default function MyChildMissing() {
                   </Form.Control>
                 </Form.Group>
 
-                {/* Height */}
-                <Form.Group className="mb-3" controlId="height">
-                  <Form.Label>Height</Form.Label>
-                  <Form.Control input="text" name="height"></Form.Control>
-                </Form.Group>
 
                 {/* Relationship */}
                 <Form.Group className="mb-3" controlId="relationship">
@@ -94,26 +61,15 @@ export default function MyChildMissing() {
                   </Form.Control>
                 </Form.Group>
 
-                {/* Differently Abled */}
-                <Form.Group className="mb-3" controlId="differentlyAbled">
-                  <Form.Label>Differently Abled (Physical/Mental)</Form.Label>
-                  <div>
-                    <Form.Check
-                      inline
-                      type="radio"
-                      label="Yes"
-                      value="yes"
-                      name="differentlyAbledNo"
-                    />
-                    <Form.Check
-                      inline
-                      type="radio"
-                      label="No"
-                      value="no"
-                      name="differentlyAbled"
-                    />
-                  </div>
+                {/* Description */}
+                <Form.Group className="mb-3" controlId="description">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    placeholder="Describe how the child was lost"
+                  ></Form.Control>
                 </Form.Group>
+
               </Col>
             </Row>
           </Form>
@@ -125,52 +81,32 @@ export default function MyChildMissing() {
             <Row>
               {/* Father Details */}
               <Col md={6}>
-                <h4>Father Details</h4>
+                <h4>Father / Guardian Details</h4>
                 <Form.Group className="mb-3" controlId="fatherName">
-                  <Form.Label>Father Name</Form.Label>
-                  <Form.Control type="text" placeholder="Child's Father Name" />
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control type="text" placeholder="Name" />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="fatherEmail">
-                  <Form.Label>Father Email</Form.Label>
+                  <Form.Label>Email</Form.Label>
                   <Form.Control
                     type="email"
-                    placeholder="Child's Father Email"
+                    placeholder="Email"
                   />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="fatherMobileNumber">
-                  <Form.Label>Father Mobile Number</Form.Label>
+                  <Form.Label>Mobile Number</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Child's Father Mobile"
+                    placeholder="Mobile"
                   />
                 </Form.Group>
               </Col>
 
               {/* Mother Details */}
               <Col md={6}>
-                <h4>Mother Details</h4>
-                <Form.Group className="mb-3" controlId="motherName">
-                  <Form.Label>Mother Name</Form.Label>
-                  <Form.Control type="text" placeholder="Child's Mother Name" />
-                </Form.Group>
 
-                <Form.Group className="mb-3" controlId="motherEmail">
-                  <Form.Label>Mother Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    placeholder="Child's Mother Email"
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="motherMobileNumber">
-                  <Form.Label>Mother Mobile Number</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Child's Mother Mobile"
-                  />
-                </Form.Group>
               </Col>
             </Row>
 

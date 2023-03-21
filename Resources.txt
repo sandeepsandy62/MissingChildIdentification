@@ -1,3 +1,5 @@
 Backend Register and Login Functionality : https://www.freecodecamp.org/news/how-to-build-a-fullstack-authentication-system-with-react-express-mongodb-heroku-and-netlify/
 Token storage implementations : https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications
 React Tutorials : https://www.digitalocean.com/community/tags/react
+Deploying machine learning models as API : https://www.geeksforgeeks.org/deploying-ml-models-as-api-using-fastapi/
+working with images (Cloudinary & MongoDB) : https://www.youtube.com/watch?v=FsD_gUbYsb8&ab_channel=CODINGACADEMY
