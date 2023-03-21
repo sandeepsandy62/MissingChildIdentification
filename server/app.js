@@ -38,6 +38,7 @@ app.use((req, res, next) => {
 
 const User = require("./DB/userModel");
 const SightedChild = require("./DB/sightedChildModel");
+const MissingChild = require("./DB/missingChildModel");
 
 //Routes
 
@@ -176,7 +177,7 @@ const storage = multer.diskStorage({
 //configure multer
 const upload = multer({ storage: storage });
 
-//create the API endpoint
+//create the sightedChild API endpoint
 app.post('/sightedchild', upload.single('testImage'), async (req, res) => {
   const newSightedChild = new SightedChild({
     name: req.body.name,
@@ -204,6 +205,42 @@ app.post('/sightedchild', upload.single('testImage'), async (req, res) => {
       res.status(400).send('Error occurred while saving image');
     });
 });
+
+//create the missingChild API endpoint
+app.post('/missingchild', upload.single('testImage'), async (req, res) => {
+  const newMissingChild = new MissingChild({
+    name: req.body.name,
+    dateOfMissing: req.body.dateOfMissing,
+    dateOfBirth: req.body.dateOfBirth,
+    gender: req.body.gender,
+    relationship: req.body.relationship,
+    description: req.body.description,
+    fatherName : req.body.fatherName,
+    fatherEmail:req.body.fatherEmail,
+    fatherMobileNumber:req.body.fatherMobileNumber,
+    childAdhaarNumber:req.body.childAdhaarNumber,
+    state: req.body.state,
+    district: req.body.district,
+    address: req.body.address,
+    pincode: req.body.pincode,
+    img: {
+      data: fs.readFileSync(path.join(__dirname, '/uploads/' + req.file.filename)),
+      contentType: req.file.mimetype,
+    },
+  });
+
+  newMissingChild.save()
+    .then(() => {
+      console.log('Image is saved');
+      res.status(200).send('Image is saved');
+    })
+    .catch((err) => {
+      console.log(err, 'error has occurred');
+      res.status(400).send('Error occurred while saving image');
+    });
+});
+
+
 
 
 module.exports = app;
