@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const auth = require("./auth");
-const mongoose = require("mongoose");
+const multer = require("multer");
 
 var fs = require("fs");
 var path = require("path");
@@ -13,6 +13,8 @@ require("dotenv/config");
 // body parser configuration
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.set("view engine", "ejs");
 //require the database connection
 const dbConnect = require("./DB/dbConnect");
 
@@ -161,36 +163,47 @@ app.get("/auth-endpoint", (request, response) => {
   response.json({ message: "You are authorized to access me" });
 });
 
-//sightedChild
-app.post("/sightedChild", async (req, res) => {
-    const { basicDetails, locationDetails, uploadMedia } = req.body;
-    console.log(uploadMedia);
-  
-    // const newSightedChild = new SightedChild({
-    //   name: basicDetails.name,
-    //   dateOfSighting: basicDetails.dateOfSighting,
-    //   description: basicDetails.description,
-    //   gender: basicDetails.gender,
-    //   reason: basicDetails.reason,
-    //   location: {
-    //     sightedAddress: locationDetails.sightedAddress,
-    //     sightedDistrict: locationDetails.sightedDistrict,
-    //     sightedPincode: locationDetails.sightedPincode,
-    //     sightedState: locationDetails.sightedState,
-    //   },
-    //   img: {
-    //     data: Buffer.from(uploadMedia.base64, "base64"),
-    //     contentType: uploadMedia.contentType,
-    //   },
-    // });
-  
-    // try {
-    //   await newSightedChild.save();
-    //   res.status(200).json({ message: "Sighted child data saved successfully" });
-    // } catch (error) {
-    //   res.status(500).json({ error: error.message });
-    // }
+//set the destination and filename for multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+//configure multer
+const upload = multer({ storage: storage });
+
+//create the API endpoint
+app.post('/sightedchild', upload.single('testImage'), async (req, res) => {
+  const newSightedChild = new SightedChild({
+    name: req.body.name,
+    dateOfSighting: req.body.dateOfSighting,
+    description: req.body.description,
+    gender: req.body.gender,
+    reason: req.body.reason,
+    sightedAddress: req.body.sightedAddress,
+    sightedDistrict: req.body.sightedDistrict,
+    sightedPincode: req.body.sightedPincode,
+    sightedState: req.body.sightedState,
+    img: {
+      data: fs.readFileSync(path.join(__dirname, '/uploads/' + req.file.filename)),
+      contentType: req.file.mimetype,
+    },
   });
-  
+
+  newSightedChild.save()
+    .then(() => {
+      console.log('Image is saved');
+      res.status(200).send('Image is saved');
+    })
+    .catch((err) => {
+      console.log(err, 'error has occurred');
+      res.status(400).send('Error occurred while saving image');
+    });
+});
+
 
 module.exports = app;

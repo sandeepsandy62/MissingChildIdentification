@@ -49,38 +49,31 @@ function IHaveSightedChild() {
   const handleSubmit = async (event) => {
     event.preventDefault();
   
-    const reader = new FileReader();
-    reader.readAsDataURL(uploadMedia);
-    reader.onloadend = async () => {
-      const base64Data = reader.result.replace(/^data:(.*;base64,)?/, "");
+    const formData = new FormData();
+    formData.append("name", basicDetails.name);
+    formData.append("dateOfSighting", basicDetails.dateOfSighting);
+    formData.append("description", basicDetails.description);
+    formData.append("gender", basicDetails.gender);
+    formData.append("reason", basicDetails.reason);
+    formData.append("sightedAddress", locationDetails.sightedAddress);
+    formData.append("sightedDistrict", locationDetails.sightedDistrict);
+    formData.append("sightedPincode", locationDetails.sightedPincode);
+    formData.append("sightedState", locationDetails.sightedState);
+    formData.append("testImage", uploadMedia);
   
-      const data = {
-        basicDetails: {
-          name: basicDetails.name,
-          dateOfSighting: basicDetails.dateOfSighting,
-          description: basicDetails.description,
-          gender: basicDetails.gender,
-          reason: basicDetails.reason,
+    try {
+      const response = await axios.post("http://localhost:5000/sightedchild", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-        locationDetails: {
-          sightedAddress: locationDetails.sightedAddress,
-          sightedDistrict: locationDetails.sightedDistrict,
-          sightedPincode: locationDetails.sightedPincode,
-          sightedState: locationDetails.sightedState,
-        },
-        uploadMedia: base64Data,
-        contentType: uploadMedia.type,
-      };
+      });
   
-      try {
-        const response = await axios.post("http://localhost:5000/sightedChild", data);
-  
-        console.log(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
+  
   
 
   
