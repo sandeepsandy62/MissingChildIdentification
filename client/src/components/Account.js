@@ -1,9 +1,11 @@
 import React from 'react'
 
-function Account() {
+function Account({ childId, setChildId }) {
   return (
-    <div>Account</div>
+    <div>
+      Id of the child is {childId}
+    </div>
   )
 }
 
-export default Account
+export default Account;

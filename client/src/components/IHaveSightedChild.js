@@ -6,10 +6,15 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Alert, Button } from "react-bootstrap";
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import axios from "axios";
 
 function IHaveSightedChild() {
+
+ 
+
+  const [sighted,setSighted] = useState(false);
+
   const [basicDetails, setBasicDetails] = useState({
     name: "",
     dateOfSighting: "",
@@ -46,6 +51,8 @@ function IHaveSightedChild() {
     
   };
 
+  const [sightedChildId,setSightedChildId] = useState('');
+
   const handleSubmit = async (event) => {
     event.preventDefault();
   
@@ -68,7 +75,8 @@ function IHaveSightedChild() {
         },
       });
   
-      console.log(response.data);
+      setSightedChildId(response.data);
+      setSighted(true);
     } catch (error) {
       console.error(error);
     }
@@ -205,6 +213,7 @@ function IHaveSightedChild() {
           </Form>
         </Tab>
 
+        {/* Upload Image */}
         <Tab eventKey="uploadMedia" title="Upload Media">
           <Form onSubmit={handleSubmit} encType="multipart/form-data">
             <Row>
@@ -227,7 +236,11 @@ function IHaveSightedChild() {
               </Col>
             </Row>
           </Form>
+          <div>
+            Save this Id for future references : {sightedChildId}
+          </div>
         </Tab>
+
       </Tabs>
     </div>
   );

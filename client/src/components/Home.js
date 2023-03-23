@@ -34,6 +34,7 @@ function Home() {
     clearToken();
   };
 
+
   return (
     <Router>
       <div className="App">
@@ -65,11 +66,11 @@ function Home() {
         </Navbar>
         <Routes>
           <Route exact path="/" element={<MyChildMissing />} />
-          <Route exact path="/mychildmissing" element={<MyChildMissing />} />
+          <Route exact path="/mychildmissing" element={<MyChildMissing  />} />
           <Route exact path="/searchmissingchild" element={<SearchMissingChild />} />
-          <Route exact path="/ihavesightedchild" element={<IHaveSightedChild />} />
+          <Route exact path="/ihavesightedchild" element={<IHaveSightedChild  />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
-          <Route exact path="/myaccount" element={<Account />} />
+          <Route exact path="/myaccount" element={<Account  />} />
           <Route exact path="/editprofile" element={<EditProfile />} />
           {/* <Route exact path="/signup" element={<SignUp setShowSignUp={setShowSignUp}/>} /> */}
         </Routes>

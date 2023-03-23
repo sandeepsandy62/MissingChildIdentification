@@ -25,6 +25,7 @@ export default function MyChildMissing() {
   const [address, setAddress] = useState('');
   const [pincode, setPincode] = useState('');
   const [uploadMedia, setUploadMedia] = useState('');
+  const [missingChildId,setMissingChildId] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -53,7 +54,7 @@ export default function MyChildMissing() {
         },
       });
   
-      console.log(response.data);
+      setMissingChildId(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -280,10 +281,15 @@ export default function MyChildMissing() {
               <Form.Group className="mb-3" controlId="submit">
                   <Button type="submit">Submit</Button>
                 </Form.Group>
+
+
               </Col>
 
             </Row>
           </Form>
+          <div>
+            Save this Id for future references : {missingChildId}
+          </div>
         </Tab>
       </Tabs>
     </div>

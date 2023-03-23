@@ -196,10 +196,10 @@ app.post('/sightedchild', upload.single('testImage'), async (req, res) => {
   });
 
   newSightedChild.save()
-    .then(() => {
-      console.log('Image is saved');
-      res.status(200).send('Image is saved');
-    })
+  .then((savedSightedChild) => {
+    console.log('Image is saved');
+    res.status(200).send(`${savedSightedChild._id}`);
+  })
     .catch((err) => {
       console.log(err, 'error has occurred');
       res.status(400).send('Error occurred while saving image');
@@ -230,15 +230,24 @@ app.post('/missingchild', upload.single('testImage'), async (req, res) => {
   });
 
   newMissingChild.save()
-    .then(() => {
-      console.log('Image is saved');
-      res.status(200).send('Image is saved');
-    })
+  .then((savedMissingChild) => {
+    console.log('Image is saved');
+    res.status(200).send(`${savedMissingChild._id}`);
+  })
     .catch((err) => {
       console.log(err, 'error has occurred');
       res.status(400).send('Error occurred while saving image');
     });
 });
+
+//Sighted Feature-Vector Creation 
+
+//Missing Feature-Vector Creation
+
+
+//Match the Sighted Child with the Missing Child Database
+
+//search the status of the missing child
 
 
 
