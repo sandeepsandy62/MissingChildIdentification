@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File , Request , Header
 from bson.binary import Binary
 import pymongo
 import numpy as np
@@ -8,8 +8,26 @@ import tensorflow as tf
 from dotenv import load_dotenv
 import os
 from tensorflow import keras
+from bson.objectid import ObjectId
+from fastapi.middleware.cors import CORSMiddleware
+from tensorflow.keras.applications.resnet50 import preprocess_input
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+
 
 app = FastAPI()
+
+
+
+# Add CORS middleware to app
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 load_dotenv() #load environment variables from .env file
 
@@ -31,14 +49,15 @@ client = pymongo.MongoClient(db_url)
 
 # Get a reference to the database and collection
 db = client['authDB']
-collection = db['missingFeatures']
+collection_missing = db['missingFeatures']
+collection_sighted = db['sightedFeatures']
 
 # Define a function to extract the feature vector from an image
 def extract_features(image_bytes):
     image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
     image = image.resize((224, 224))
     image_array = np.array(image)
-    image_array = preprocess_input(image_array, version=2)
+    image_array = preprocess_input(image_array)
     feature_vector = model.predict(np.expand_dims(image_array, axis=0))
     return feature_vector.flatten()
 
@@ -47,7 +66,7 @@ def extract_features(image_bytes):
 async def search_image(image_file: UploadFile = File(...)):
     image_bytes = await image_file.read()
     query_feature_vector = extract_features(image_bytes)
-    cursor = collection.find({})
+    cursor = collection_missing.find({})
     for document in cursor:
         db_feature_vector = document['feature_vector']
         similarity = np.dot(db_feature_vector, query_feature_vector) / (np.linalg.norm(db_feature_vector) * np.linalg.norm(query_feature_vector))
@@ -58,11 +77,54 @@ async def search_image(image_file: UploadFile = File(...)):
 # Print the "connected" message
 print("Successfully connected to MongoDB Atlas")
 
-@app.post("/extract_feature_vector")
-async def extract_feature_vector(image_file: UploadFile = File(...)):
-    image_bytes = await image_file.read()
+@app.post("/extract_feature_vector/{child_id}")
+async def extract_feature_vector(child_id: str):
+    # Get a reference to the database and collection
+    db = client['authDB']
+    collection = db['missingchildren']
+    # Convert the child_id string to a BSON object
+    bson_child_id = ObjectId(child_id)
+    
+    # Search for the child ID in the database and retrieve the image
+    child = collection.find_one({'_id': bson_child_id})
+    if child is None:
+        return {'error': 'Child ID not found'}
+    
+    # Extract the image binary data and extract features
+    image_bytes = child['img']['data']
     query_feature_vector = extract_features(image_bytes)
-    return {"Feature Vector":query_feature_vector}
+    my_object = {'FeatureVector': query_feature_vector.tolist()}
+    encoded_object = jsonable_encoder(my_object)
+    
+    return encoded_object
+
+
+# @app.post("/store_feature_vector")
+# async def store_feature_vector(request: Request):
+#     headers = request.headers
+#     data = await request.json()
+#     missing_child_id = data.get("missing_child_id")
+#     feature_vector = data.get("feature_vector")
+#     collection_missing.insert_one({'missing_child_id': missing_child_id, 'feature_vector': feature_vector})
+#     my_object = {"message": "Feature vector stored successfully"}
+#     encoded_object = jsonable_encoder(my_object)
+#     return JSONResponse(content=encoded_object , headers=headers)
+
+@app.post("/store_feature_vector/{missing_child_id}")
+async def store_feature_vector(missing_child_id: str, feature_vector: dict):
+    feature_vector_data = feature_vector['feature_vector']['data']
+    collection_missing.insert_one({'missing_child_id': missing_child_id, 'feature_vector': feature_vector_data})
+    print(feature_vector_data)
+    my_object = {"message": "Feature vector stored successfully"}
+    encoded_object = jsonable_encoder(my_object)
+
+
+    # Return a success message as a response with headers
+    return JSONResponse(content=encoded_object)
+
+
+
+
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="localhost", port=8000)
