@@ -98,22 +98,46 @@ async def extract_feature_vector(child_id: str):
     
     return encoded_object
 
+#extract feature vectors from sighted children
+@app.post("/extract_feature_vector_sighted/{child_id}")
+async def extract_feature_vector(child_id: str):
+    # Get a reference to the database and collection
+    db = client['authDB']
+    collection = db['sightedchildren']
+    # Convert the child_id string to a BSON object
+    bson_child_id = ObjectId(child_id)
+    
+    # Search for the child ID in the database and retrieve the image
+    child = collection.find_one({'_id': bson_child_id})
+    if child is None:
+        return {'error': 'Child ID not found'}
+    
+    # Extract the image binary data and extract features
+    image_bytes = child['img']['data']
+    query_feature_vector = extract_features(image_bytes)
+    my_object = {'FeatureVector': query_feature_vector.tolist()}
+    encoded_object = jsonable_encoder(my_object)
+    
+    return encoded_object
 
-# @app.post("/store_feature_vector")
-# async def store_feature_vector(request: Request):
-#     headers = request.headers
-#     data = await request.json()
-#     missing_child_id = data.get("missing_child_id")
-#     feature_vector = data.get("feature_vector")
-#     collection_missing.insert_one({'missing_child_id': missing_child_id, 'feature_vector': feature_vector})
-#     my_object = {"message": "Feature vector stored successfully"}
-#     encoded_object = jsonable_encoder(my_object)
-#     return JSONResponse(content=encoded_object , headers=headers)
-
+# store missing children feature vector
 @app.post("/store_feature_vector/{missing_child_id}")
 async def store_feature_vector(missing_child_id: str, feature_vector: dict):
     feature_vector_data = feature_vector['feature_vector']['data']
     collection_missing.insert_one({'missing_child_id': missing_child_id, 'feature_vector': feature_vector_data})
+    print(feature_vector_data)
+    my_object = {"message": "Feature vector stored successfully"}
+    encoded_object = jsonable_encoder(my_object)
+
+
+    # Return a success message as a response with headers
+    return JSONResponse(content=encoded_object)
+
+#store sighted children feature vector
+@app.post("/store_feature_vector_sighted/{sighted_child_id}")
+async def store_feature_vector(sighted_child_id: str, feature_vector: dict):
+    feature_vector_data = feature_vector['feature_vector']['data']
+    collection_sighted.insert_one({'sighted_child_id': sighted_child_id, 'feature_vector': feature_vector_data})
     print(feature_vector_data)
     my_object = {"message": "Feature vector stored successfully"}
     encoded_object = jsonable_encoder(my_object)
