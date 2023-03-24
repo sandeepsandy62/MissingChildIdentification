@@ -65,16 +65,16 @@ def extract_features(image_bytes):
 @app.post("/search_image/{sightedChildId}")
 async def search_image(sightedChildId: str):
     # get feature vector from sightedFeatures collection
-    document = collection_sighted.find_one({"_id": ObjectId(sightedChildId)})
+    document = collection_sighted.find_one({"sighted_child_id":sightedChildId})
     if document is None:
         return {"result": "not found"}
     
     query_feature_vector = document["feature_vector"]
-    cursor = collection_missing.find({})
+    cursor = collection_missing.find()
     for document in cursor:
         db_feature_vector = document["feature_vector"]
         similarity = np.dot(db_feature_vector, query_feature_vector) / (np.linalg.norm(db_feature_vector) * np.linalg.norm(query_feature_vector))
-        if similarity > 0.8:
+        if similarity > 0.5:
             return {"result": "found"}
 
     return {"result": "not found"}
@@ -134,7 +134,6 @@ async def extract_feature_vector(child_id: str):
 async def store_feature_vector(missing_child_id: str, feature_vector: dict):
     feature_vector_data = feature_vector['feature_vector']['data']
     collection_missing.insert_one({'missing_child_id': missing_child_id, 'feature_vector': feature_vector_data})
-    print(feature_vector_data)
     my_object = {"message": "Feature vector stored successfully"}
     encoded_object = jsonable_encoder(my_object)
 
@@ -147,7 +146,6 @@ async def store_feature_vector(missing_child_id: str, feature_vector: dict):
 async def store_feature_vector(sighted_child_id: str, feature_vector: dict):
     feature_vector_data = feature_vector['feature_vector']['data']
     collection_sighted.insert_one({'sighted_child_id': sighted_child_id, 'feature_vector': feature_vector_data})
-    print(feature_vector_data)
     my_object = {"message": "Feature vector stored successfully"}
     encoded_object = jsonable_encoder(my_object)
 
