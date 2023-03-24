@@ -51,7 +51,7 @@ function IHaveSightedChild() {
     
   };
 
-  const [sightedChildId,setSightedChildId] = useState('');
+  const [sightedChildId,setSightedChildId] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -75,12 +75,68 @@ function IHaveSightedChild() {
         },
       });
   
-      setSightedChildId(response.data);
+      const sightedChildId = response.data;
+      setSightedChildId(sightedChildId);
       setSighted(true);
+  
+      if(sightedChildId){
+        const featureVectorResponse = await axios.post(
+          "http://localhost:8000/extract_feature_vector_sighted/"+sightedChildId,
+          {},
+          {
+            headers: {
+              "Content-Type":"application/json",
+              "Access-Control-Allow-Origin":"*",
+            },
+          }
+        );
+        console.log("successfully extracted feature vector");
+  
+        if(featureVectorResponse.data != null){
+          try {
+            const featureVectorList = featureVectorResponse.data.FeatureVector;
+            console.log(featureVectorList);
+            const response = await axios.post(
+              "http://localhost:8000/store_feature_vector_sighted/"+sightedChildId,
+              {
+                sighted_child_id : sightedChildId,
+                feature_vector : {data: featureVectorList},
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  "Access-Control-Allow-Origin": "*",
+                },
+              }
+            );
+            console.log(response.data);
+          } catch (error) {
+            console.log(error);
+          }
+  
+          try {
+            const searchResponse = await axios.post(
+              "http://localhost:8000/search_image/" + sightedChildId,
+              {},
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  "Access-Control-Allow-Origin": "*",
+                },
+              }
+            );
+            console.log(searchResponse.data);
+          } catch (error) {
+            console.log(error);
+          }
+          
+        }
+      }
     } catch (error) {
       console.error(error);
     }
   };
+  
   
   
 

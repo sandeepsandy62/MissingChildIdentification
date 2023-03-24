@@ -5,35 +5,35 @@ import Tab from "react-bootstrap/Tab";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { Alert , Button } from 'react-bootstrap';
+import { Alert, Button } from "react-bootstrap";
 import { useState } from "react";
-import axios from 'axios';
+import axios from "axios";
 
 export default function MyChildMissing() {
-  const [name, setName] = useState('');
-  const [dateOfMissing, setDateOfMissing] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
-  const [gender, setGender] = useState('male');
-  const [relationship, setRelationship] = useState('parent');
-  const [description, setDescription] = useState('');
-  const [fatherName, setFatherName] = useState('');
-  const [fatherEmail, setFatherEmail] = useState('');
-  const [fatherMobileNumber, setFatherMobileNumber] = useState('');
-  const [childAdhaarNumber, setChildAdhaarNumber] = useState('');
-  const [state, setState] = useState('');
-  const [district, setDistrict] = useState('');
-  const [address, setAddress] = useState('');
-  const [pincode, setPincode] = useState('');
-  const [uploadMedia, setUploadMedia] = useState('');
-  const [missingChildId,setMissingChildId] = useState('');
+  const [name, setName] = useState("");
+  const [dateOfMissing, setDateOfMissing] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [gender, setGender] = useState("male");
+  const [relationship, setRelationship] = useState("parent");
+  const [description, setDescription] = useState("");
+  const [fatherName, setFatherName] = useState("");
+  const [fatherEmail, setFatherEmail] = useState("");
+  const [fatherMobileNumber, setFatherMobileNumber] = useState("");
+  const [childAdhaarNumber, setChildAdhaarNumber] = useState("");
+  const [state, setState] = useState("");
+  const [district, setDistrict] = useState("");
+  const [address, setAddress] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [uploadMedia, setUploadMedia] = useState("");
+  const [missingChildId, setMissingChildId] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
   
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("dateOfMissing",dateOfMissing);
-    formData.append("dateOfBirth",dateOfBirth);
+    formData.append("dateOfMissing", dateOfMissing);
+    formData.append("dateOfBirth", dateOfBirth);
     formData.append("gender", gender);
     formData.append("relationship", relationship);
     formData.append("description", description);
@@ -48,18 +48,60 @@ export default function MyChildMissing() {
     formData.append("testImage", uploadMedia);
   
     try {
-      const response = await axios.post("http://localhost:5000/missingchild", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:5000/missingchild",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
   
-      setMissingChildId(response.data);
+      const missingChildId = response.data;
+      setMissingChildId(missingChildId)
+  
+      if(missingChildId){
+        const featureVectorResponse = await axios.post(
+          "http://localhost:8000/extract_feature_vector/" + missingChildId,
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+          }
+        );
+  
+        console.log("successfully extracted feature vector");
+  
+        if (featureVectorResponse.data != null) {
+          try {
+            const featureVectorList = featureVectorResponse.data.FeatureVector;
+            console.log(featureVectorList);
+            const response = await axios.post(
+              "http://localhost:8000/store_feature_vector/"+missingChildId,
+              {
+                missing_child_id: missingChildId,
+                feature_vector: { data: featureVectorList },
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  "Access-Control-Allow-Origin": "*",
+                },
+              }
+            );
+            console.log(response.data);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
     } catch (error) {
       console.error(error);
     }
-  };
-  
+  };  
 
   return (
     <div style={{ display: "block", width: "80%", padding: 20 }}>
@@ -73,42 +115,51 @@ export default function MyChildMissing() {
                 {/* Name */}
                 <Form.Group className="mb-3" controlId="formName">
                   <Form.Label>Name</Form.Label>
-                  <Form.Control 
-                  type="text" 
-                  placeholder="Missing Child Name"
-                  value={name}
-                  onChange={(event)=>{setName(event.target.value)}}
+                  <Form.Control
+                    type="text"
+                    placeholder="Missing Child Name"
+                    value={name}
+                    onChange={(event) => {
+                      setName(event.target.value);
+                    }}
                   />
                 </Form.Group>
 
                 {/* Date of Missing */}
                 <Form.Group className="mb-3" controlId="dateOfMissing">
                   <Form.Label>Date of Missing</Form.Label>
-                  <Form.Control 
-                  type="date"
-                  value={dateOfMissing}
-                  onChange={(event)=>{setDateOfMissing(event.target.value)}} />
+                  <Form.Control
+                    type="date"
+                    value={dateOfMissing}
+                    onChange={(event) => {
+                      setDateOfMissing(event.target.value);
+                    }}
+                  />
                 </Form.Group>
 
                 {/* Date of Birth */}
                 <Form.Group className="mb-3" controlId="dateOfBirth">
                   <Form.Label>Date of Birth</Form.Label>
-                  <Form.Control 
-                  type="date"
-                  value={dateOfBirth}
-                  onChange={(event)=>{setDateOfBirth(event.target.value)}} />
+                  <Form.Control
+                    type="date"
+                    value={dateOfBirth}
+                    onChange={(event) => {
+                      setDateOfBirth(event.target.value);
+                    }}
+                  />
                 </Form.Group>
-
               </Col>
               <Col md={6}>
                 {/* Gender */}
                 <Form.Group className="mb-3" controlId="gender">
                   <Form.Label>Gender</Form.Label>
-                  <Form.Control 
-                  as="select" 
-                  name="gender"
-                  value={gender}
-                  onChange={(event)=>{setGender(event.target.value)}}
+                  <Form.Control
+                    as="select"
+                    name="gender"
+                    value={gender}
+                    onChange={(event) => {
+                      setGender(event.target.value);
+                    }}
                   >
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -116,15 +167,16 @@ export default function MyChildMissing() {
                   </Form.Control>
                 </Form.Group>
 
-
                 {/* Relationship */}
                 <Form.Group className="mb-3" controlId="relationship">
                   <Form.Label>Relationship</Form.Label>
-                  <Form.Control 
-                  as="select" 
-                  name="relationship"
-                  value={relationship}
-                  onChange={(event)=>{setRelationship(event.target.value)}}
+                  <Form.Control
+                    as="select"
+                    name="relationship"
+                    value={relationship}
+                    onChange={(event) => {
+                      setRelationship(event.target.value);
+                    }}
                   >
                     <option value="parent">Parent</option>
                     <option value="legalGuardian">Legal Guardian</option>
@@ -139,10 +191,11 @@ export default function MyChildMissing() {
                     as="textarea"
                     placeholder="Describe how the child was lost"
                     value={description}
-                    onChange={(event)=>{setDescription(event.target.value)}}
+                    onChange={(event) => {
+                      setDescription(event.target.value);
+                    }}
                   ></Form.Control>
                 </Form.Group>
-
               </Col>
             </Row>
           </Form>
@@ -157,11 +210,13 @@ export default function MyChildMissing() {
                 <h4>Father / Guardian Details</h4>
                 <Form.Group className="mb-3" controlId="fatherName">
                   <Form.Label>Name</Form.Label>
-                  <Form.Control 
-                  type="text" 
-                  placeholder="Name"
-                  value={fatherName}
-                  onChange={(event)=>{setFatherName(event.target.value)}}
+                  <Form.Control
+                    type="text"
+                    placeholder="Name"
+                    value={fatherName}
+                    onChange={(event) => {
+                      setFatherName(event.target.value);
+                    }}
                   />
                 </Form.Group>
 
@@ -171,7 +226,9 @@ export default function MyChildMissing() {
                     type="email"
                     placeholder="Email"
                     value={fatherEmail}
-                    onChange={(event)=>{setFatherEmail(event.target.value)}}
+                    onChange={(event) => {
+                      setFatherEmail(event.target.value);
+                    }}
                   />
                 </Form.Group>
 
@@ -181,15 +238,15 @@ export default function MyChildMissing() {
                     type="text"
                     placeholder="Mobile"
                     value={fatherMobileNumber}
-                    onChange={(event)=>{setFatherMobileNumber(event.target.value)}}
+                    onChange={(event) => {
+                      setFatherMobileNumber(event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
 
               {/* Mother Details */}
-              <Col md={6}>
-
-              </Col>
+              <Col md={6}></Col>
             </Row>
 
             {/* Child details */}
@@ -202,7 +259,9 @@ export default function MyChildMissing() {
                     type="text"
                     placeholder="Child's Adhaar Number"
                     value={childAdhaarNumber}
-                    onChange={(event)=>{setChildAdhaarNumber(event.target.value)}}
+                    onChange={(event) => {
+                      setChildAdhaarNumber(event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
@@ -217,24 +276,27 @@ export default function MyChildMissing() {
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="state">
                   <Form.Label>State</Form.Label>
-                  <Form.Control 
-                  type="text"
-                  placeholder="state"
-                  value={state}
-                  onChange={(event)=>{setState(event.target.value)}}
+                  <Form.Control
+                    type="text"
+                    placeholder="state"
+                    value={state}
+                    onChange={(event) => {
+                      setState(event.target.value);
+                    }}
                   />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="district">
                   <Form.Label>District</Form.Label>
-                  <Form.Control 
-                  type="text"
-                  placeholder="district"
-                  value={district}
-                  onChange={(event)=>{setDistrict(event.target.value)}}
+                  <Form.Control
+                    type="text"
+                    placeholder="district"
+                    value={district}
+                    onChange={(event) => {
+                      setDistrict(event.target.value);
+                    }}
                   />
                 </Form.Group>
-
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="address">
@@ -243,16 +305,20 @@ export default function MyChildMissing() {
                     type="text"
                     placeholder="H-No , street , village ..."
                     value={address}
-                    onChange={(event)=>{setAddress(event.target.value)}}
+                    onChange={(event) => {
+                      setAddress(event.target.value);
+                    }}
                   />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="pincode">
                   <Form.Label>Pincode</Form.Label>
-                  <Form.Control 
-                  type="text"
-                  value={pincode}
-                  onChange={(event)=>{setPincode(event.target.value)}}
+                  <Form.Control
+                    type="text"
+                    value={pincode}
+                    onChange={(event) => {
+                      setPincode(event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
@@ -269,27 +335,24 @@ export default function MyChildMissing() {
                   Upload JPG or PNG images under 2 MB.
                 </Alert>
                 <Form.Group>
-                <Form.Label>Choose a file to upload</Form.Label>
-                <Form.Control 
-                name="uploadMedia"
-                type="file"
-                onChange={(event)=>{setUploadMedia(event.target.files[0])}}
-                />
-              </Form.Group>
-
-              {/* Submit Button */}
-              <Form.Group className="mb-3" controlId="submit">
-                  <Button type="submit">Submit</Button>
+                  <Form.Label>Choose a file to upload</Form.Label>
+                  <Form.Control
+                    name="uploadMedia"
+                    type="file"
+                    onChange={(event) => {
+                      setUploadMedia(event.target.files[0]);
+                    }}
+                  />
                 </Form.Group>
 
-
+                {/* Submit Button */}
+                <Form.Group className="mb-3" controlId="submit">
+                  <Button type="submit">Submit</Button>
+                </Form.Group>
               </Col>
-
             </Row>
           </Form>
-          <div>
-            Save this Id for future references : {missingChildId}
-          </div>
+          <div>Save this Id for future references : {missingChildId}</div>
         </Tab>
       </Tabs>
     </div>
