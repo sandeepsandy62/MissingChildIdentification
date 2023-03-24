@@ -74,11 +74,11 @@ function IHaveSightedChild() {
           "Content-Type": "multipart/form-data",
         },
       });
-
+  
       const sightedChildId = response.data;
       setSightedChildId(sightedChildId);
       setSighted(true);
-
+  
       if(sightedChildId){
         const featureVectorResponse = await axios.post(
           "http://localhost:8000/extract_feature_vector_sighted/"+sightedChildId,
@@ -91,7 +91,7 @@ function IHaveSightedChild() {
           }
         );
         console.log("successfully extracted feature vector");
-
+  
         if(featureVectorResponse.data != null){
           try {
             const featureVectorList = featureVectorResponse.data.FeatureVector;
@@ -113,12 +113,30 @@ function IHaveSightedChild() {
           } catch (error) {
             console.log(error);
           }
+  
+          try {
+            const searchResponse = await axios.post(
+              "http://localhost:8000/search_image/" + sightedChildId,
+              {},
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  "Access-Control-Allow-Origin": "*",
+                },
+              }
+            );
+            console.log(searchResponse.data);
+          } catch (error) {
+            console.log(error);
+          }
+          
         }
       }
     } catch (error) {
       console.error(error);
     }
   };
+  
   
   
 

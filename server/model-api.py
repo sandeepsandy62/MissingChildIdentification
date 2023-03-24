@@ -62,17 +62,26 @@ def extract_features(image_bytes):
     return feature_vector.flatten()
 
 # Define the API endpoint
-@app.post("/search_image/")
-async def search_image(image_file: UploadFile = File(...)):
-    image_bytes = await image_file.read()
-    query_feature_vector = extract_features(image_bytes)
+@app.post("/search_image/{sightedChildId}")
+async def search_image(sightedChildId: str):
+    # get feature vector from sightedFeatures collection
+    document = collection_sighted.find_one({"_id": ObjectId(sightedChildId)})
+    if document is None:
+        return {"result": "not found"}
+    
+    query_feature_vector = document["feature_vector"]
     cursor = collection_missing.find({})
     for document in cursor:
-        db_feature_vector = document['feature_vector']
+        db_feature_vector = document["feature_vector"]
         similarity = np.dot(db_feature_vector, query_feature_vector) / (np.linalg.norm(db_feature_vector) * np.linalg.norm(query_feature_vector))
         if similarity > 0.8:
             return {"result": "found"}
+
     return {"result": "not found"}
+
+
+
+
 
 # Print the "connected" message
 print("Successfully connected to MongoDB Atlas")
