@@ -51,6 +51,7 @@ client = pymongo.MongoClient(db_url)
 db = client['authDB']
 collection_missing = db['missingFeatures']
 collection_sighted = db['sightedFeatures']
+collection_missing_children = db['missingchildren']
 
 # Define a function to extract the feature vector from an image
 def extract_features(image_bytes):
@@ -75,7 +76,11 @@ async def search_image(sightedChildId: str):
         db_feature_vector = document["feature_vector"]
         similarity = np.dot(db_feature_vector, query_feature_vector) / (np.linalg.norm(db_feature_vector) * np.linalg.norm(query_feature_vector))
         if similarity > 0.5:
-            return {"result": "found"}
+            missing_child = collection_missing_children.find_one({"_id": ObjectId(document["missing_child_id"])})
+            father_email = missing_child["fatherEmail"]
+            father_name = missing_child["fatherName"]
+            # return found child details
+            return {"result": "found", "father_email": father_email , "father_name":father_name}
 
     return {"result": "not found"}
 

@@ -332,7 +332,7 @@ export default function MyChildMissing() {
             <Row>
               <Col md={12}>
                 <Alert variant="primary">
-                  Upload JPG or PNG images under 2 MB.
+                  Upload PNG images under 2 MB.
                 </Alert>
                 <Form.Group>
                   <Form.Label>Choose a file to upload</Form.Label>

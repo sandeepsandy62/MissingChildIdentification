@@ -6,14 +6,50 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Alert, Button } from "react-bootstrap";
-import { useState , useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
+import emailjs from "emailjs-com";
+emailjs.init("bwOdCCMVLhYi3MEXf");
 
 function IHaveSightedChild() {
+  const serviceId = "service_ji8liwb";
+  const templateId = "template_ntvom85";
+  const userId = "bwOdCCMVLhYi3MEXf";
+  const [sighted, setSighted] = useState(false);
+  const [fatherName, setFatherName] = useState("");
+  const [fatherEmail, setFatherEmail] = useState("");
 
- 
+  function sendEmail() {
+    console.log("in email component start");
+    const templateParams = {
+      to_name: fatherName,
+      to_email: fatherEmail,
+      last_sighted_address: locationDetails.sightedAddress,
+      last_sighted_pincode: locationDetails.sightedPincode,
+      last_sighted_state: locationDetails.sightedState,
+      last_sighted_district: locationDetails.sightedDistrict,
+      phone_number: basicDetails.phoneNumber,
+      description: basicDetails.description,
+      name: basicDetails.name,
+      date_of_sighting: basicDetails.dateOfSighting,
+      reason: basicDetails.reason,
+    };
 
-  const [sighted,setSighted] = useState(false);
+    const data = {
+      service_id: serviceId,
+      template_id: templateId,
+      user_id: userId,
+      template_params: templateParams,
+    };
+
+    axios.post('https://api.emailjs.com/api/v1.0/email/send', data)
+    .then((response) => {
+      console.log('SUCCESS! sent email', response.status, response.data);
+    })
+    .catch((error) => {
+      console.log('FAILED...', error);
+    });
+  }
 
   const [basicDetails, setBasicDetails] = useState({
     name: "",
@@ -21,6 +57,7 @@ function IHaveSightedChild() {
     description: "",
     gender: "male",
     reason: "",
+    phoneNumber: "",
   });
 
   const [locationDetails, setLocationDetails] = useState({
@@ -30,7 +67,7 @@ function IHaveSightedChild() {
     sightedPincode: "",
   });
 
-  const [uploadMedia, setUploadMedia] = useState('');
+  const [uploadMedia, setUploadMedia] = useState("");
 
   const handleBasicDetailsChange = (event) => {
     setBasicDetails({
@@ -48,14 +85,13 @@ function IHaveSightedChild() {
 
   const handleUploadMediaChange = (event) => {
     setUploadMedia(event.target.files[0]);
-    
   };
 
-  const [sightedChildId,setSightedChildId] = useState("");
+  const [sightedChildId, setSightedChildId] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     const formData = new FormData();
     formData.append("name", basicDetails.name);
     formData.append("dateOfSighting", basicDetails.dateOfSighting);
@@ -67,40 +103,46 @@ function IHaveSightedChild() {
     formData.append("sightedPincode", locationDetails.sightedPincode);
     formData.append("sightedState", locationDetails.sightedState);
     formData.append("testImage", uploadMedia);
-  
+
     try {
-      const response = await axios.post("http://localhost:5000/sightedchild", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-  
+      const response = await axios.post(
+        "http://localhost:5000/sightedchild",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
       const sightedChildId = response.data;
       setSightedChildId(sightedChildId);
       setSighted(true);
-  
-      if(sightedChildId){
+
+      if (sightedChildId) {
         const featureVectorResponse = await axios.post(
-          "http://localhost:8000/extract_feature_vector_sighted/"+sightedChildId,
+          "http://localhost:8000/extract_feature_vector_sighted/" +
+            sightedChildId,
           {},
           {
             headers: {
-              "Content-Type":"application/json",
-              "Access-Control-Allow-Origin":"*",
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
             },
           }
         );
         console.log("successfully extracted feature vector");
-  
-        if(featureVectorResponse.data != null){
+
+        if (featureVectorResponse.data != null) {
           try {
             const featureVectorList = featureVectorResponse.data.FeatureVector;
             console.log(featureVectorList);
             const response = await axios.post(
-              "http://localhost:8000/store_feature_vector_sighted/"+sightedChildId,
+              "http://localhost:8000/store_feature_vector_sighted/" +
+                sightedChildId,
               {
-                sighted_child_id : sightedChildId,
-                feature_vector : {data: featureVectorList},
+                sighted_child_id: sightedChildId,
+                feature_vector: { data: featureVectorList },
               },
               {
                 headers: {
@@ -113,7 +155,7 @@ function IHaveSightedChild() {
           } catch (error) {
             console.log(error);
           }
-  
+
           try {
             const searchResponse = await axios.post(
               "http://localhost:8000/search_image/" + sightedChildId,
@@ -126,21 +168,24 @@ function IHaveSightedChild() {
               }
             );
             console.log(searchResponse.data);
+            if (searchResponse.data.result === "found") {
+              setSighted(true);
+              if (sighted === true) {
+                console.log(searchResponse);
+                setFatherEmail(searchResponse.data.father_email);
+                setFatherName(searchResponse.data.father_name);
+                sendEmail();
+              }
+            }
           } catch (error) {
             console.log(error);
           }
-          
         }
       }
     } catch (error) {
       console.error(error);
     }
   };
-  
-  
-  
-
-  
 
   return (
     <div style={{ display: "block", width: "80%", padding: 20 }}>
@@ -156,7 +201,7 @@ function IHaveSightedChild() {
                   <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Missing Child Name"
+                    placeholder="Your Name"
                     name="name"
                     value={basicDetails.name}
                     onChange={handleBasicDetailsChange}
@@ -179,7 +224,7 @@ function IHaveSightedChild() {
                   <Form.Label>Description</Form.Label>
                   <Form.Control
                     as="textarea"
-                    placeholder="Describe how the child was lost"
+                    placeholder="Describe how the child was found"
                     name="description"
                     value={basicDetails.description}
                     onChange={handleBasicDetailsChange}
@@ -212,6 +257,17 @@ function IHaveSightedChild() {
                     value={basicDetails.reason}
                     onChange={handleBasicDetailsChange}
                   ></Form.Control>
+                </Form.Group>
+                {/* Phone number */}
+                <Form.Group className="mb-3" controlId="formName">
+                  <Form.Label>Phone Number</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter your phone number"
+                    name="phoneNumber"
+                    value={basicDetails.phoneNumber}
+                    onChange={handleBasicDetailsChange}
+                  />
                 </Form.Group>
               </Col>
             </Row>
@@ -275,7 +331,7 @@ function IHaveSightedChild() {
             <Row>
               <Col md={12}>
                 <Alert variant="primary">
-                  Upload JPG or PNG images under 2 MB.
+                  Upload PNG images under 2 MB.
                 </Alert>
                 <Form.Group>
                   <Form.Label>Choose a file to upload</Form.Label>
@@ -292,11 +348,8 @@ function IHaveSightedChild() {
               </Col>
             </Row>
           </Form>
-          <div>
-            Save this Id for future references : {sightedChildId}
-          </div>
+          <div>Save this Id for future references : {sightedChildId}</div>
         </Tab>
-
       </Tabs>
     </div>
   );

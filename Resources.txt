@@ -4,3 +4,5 @@ React Tutorials : https://www.digitalocean.com/community/tags/react
 Deploying machine learning models as API : https://www.geeksforgeeks.org/deploying-ml-models-as-api-using-fastapi/
 working with images (Cloudinary & MongoDB) : https://www.youtube.com/watch?v=FsD_gUbYsb8&ab_channel=CODINGACADEMY
 Face Detection : https://medium.com/swlh/identifying-faces-with-mtcnn-and-vggface-9d0d4927cccf
+how to send mails from reat js app : https://stackoverflow.com/questions/55795125/how-to-send-email-from-my-react-web-application
+ 
