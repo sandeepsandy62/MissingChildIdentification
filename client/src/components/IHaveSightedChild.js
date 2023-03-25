@@ -176,7 +176,7 @@ Team Child Chaser`;
                     "http://localhost:8000/send-email",
                     {
                       sender_email_id: "newbie021122@gmail.com",
-                      sender_email_id_password: "ssjbtjqamsxmtxdl",
+                      sender_email_id_password: "gmail apps password",
                       receiver_email_id: fatherEmail,
                       message: message,
                     },{
