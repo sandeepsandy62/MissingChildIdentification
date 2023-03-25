@@ -8,48 +8,11 @@ import Col from "react-bootstrap/Col";
 import { Alert, Button } from "react-bootstrap";
 import { useState } from "react";
 import axios from "axios";
-import emailjs from "emailjs-com";
-emailjs.init("bwOdCCMVLhYi3MEXf");
 
 function IHaveSightedChild() {
-  const serviceId = "service_ji8liwb";
-  const templateId = "template_ntvom85";
-  const userId = "bwOdCCMVLhYi3MEXf";
   const [sighted, setSighted] = useState(false);
   const [fatherName, setFatherName] = useState("");
   const [fatherEmail, setFatherEmail] = useState("");
-
-  function sendEmail() {
-    console.log("in email component start");
-    const templateParams = {
-      to_name: fatherName,
-      to_email: fatherEmail,
-      last_sighted_address: locationDetails.sightedAddress,
-      last_sighted_pincode: locationDetails.sightedPincode,
-      last_sighted_state: locationDetails.sightedState,
-      last_sighted_district: locationDetails.sightedDistrict,
-      phone_number: basicDetails.phoneNumber,
-      description: basicDetails.description,
-      name: basicDetails.name,
-      date_of_sighting: basicDetails.dateOfSighting,
-      reason: basicDetails.reason,
-    };
-
-    const data = {
-      service_id: serviceId,
-      template_id: templateId,
-      user_id: userId,
-      template_params: templateParams,
-    };
-
-    axios.post('https://api.emailjs.com/api/v1.0/email/send', data)
-    .then((response) => {
-      console.log('SUCCESS! sent email', response.status, response.data);
-    })
-    .catch((error) => {
-      console.log('FAILED...', error);
-    });
-  }
 
   const [basicDetails, setBasicDetails] = useState({
     name: "",
@@ -174,7 +137,59 @@ function IHaveSightedChild() {
                 console.log(searchResponse);
                 setFatherEmail(searchResponse.data.father_email);
                 setFatherName(searchResponse.data.father_name);
-                sendEmail();
+
+                //send mail
+                //message
+                const message = `
+
+Dear ${fatherName},
+
+We have some great news to share with you - we have located your missing child at ${locationDetails.sightedAddress}! We understand this must be a tremendous relief for you and your family, and we are honored to have played a part in bringing your child back to you.
+
+The person who sighted your child has provided us with the following details:
+
+Contact Details:
+
+${basicDetails.name},
+${basicDetails.phoneNumber},
+${basicDetails.reason},
+${basicDetails.description}
+
+Date: ${basicDetails.dateOfSighting}
+
+Location Details:
+
+${locationDetails.sightedAddress},
+${locationDetails.sightedDistrict},
+${locationDetails.sightedState},
+${locationDetails.sightedPincode}
+
+Please reach out to us as soon as possible so we can connect you with this person and provide further assistance as needed. Our team is dedicated to supporting families in these difficult situations, and we are here to help you in any way we can.
+
+Thank you for entrusting us with your search, and we wish you all the best as you reunite with your child.
+
+Sincerely,
+Team Child Chaser`;
+
+                try {
+                  const response = await axios.post(
+                    "http://localhost:8000/send-email",
+                    {
+                      sender_email_id: "newbie021122@gmail.com",
+                      sender_email_id_password: "ssjbtjqamsxmtxdl",
+                      receiver_email_id: fatherEmail,
+                      message: message,
+                    },{
+                      headers: {
+                        "Content-Type": "application/json",
+                        "Access-Control-Allow-Origin": "*",
+                      },
+                    },
+                  );
+                  console.log(response.data);
+                } catch (error) {
+                  console.log(error);
+                }
               }
             }
           } catch (error) {
@@ -330,9 +345,7 @@ function IHaveSightedChild() {
           <Form onSubmit={handleSubmit} encType="multipart/form-data">
             <Row>
               <Col md={12}>
-                <Alert variant="primary">
-                  Upload PNG images under 2 MB.
-                </Alert>
+                <Alert variant="primary">Upload PNG images under 2 MB.</Alert>
                 <Form.Group>
                   <Form.Label>Choose a file to upload</Form.Label>
                   <Form.Control

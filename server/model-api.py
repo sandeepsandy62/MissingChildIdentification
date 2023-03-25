@@ -14,6 +14,11 @@ from tensorflow.keras.applications.resnet50 import preprocess_input
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+
 
 app = FastAPI()
 
@@ -84,8 +89,34 @@ async def search_image(sightedChildId: str):
 
     return {"result": "not found"}
 
+#send email function
+def send_email_fun(host, port, sender, password, recipients, subject, message):
+    msg = MIMEText(message)
+    msg['Subject'] = subject
+    msg['From'] = sender
+    msg['To'] = ', '.join(recipients)
 
+    with smtplib.SMTP_SSL(host, port) as smtp_server:
+        smtp_server.login(sender, password)
+        smtp_server.sendmail(sender, recipients, msg.as_string())
 
+    print("Email sent!")
+
+#send email route
+@app.post("/send-email")
+async def send_email(request: Request):
+    data = await request.json()
+    sender = data["sender_email_id"]
+    password = data["sender_email_id_password"]
+    recipient = data["receiver_email_id"]
+    message = data["message"]
+    
+    host = "smtp.gmail.com"
+    port = 465
+
+    send_email_fun(host, port, sender, password, [recipient], "Good news - we found your child!", message)
+
+    return {"message": "Email sent successfully!"}
 
 
 # Print the "connected" message
