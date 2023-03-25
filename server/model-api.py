@@ -120,7 +120,7 @@ async def send_email(request: Request):
     password = data["sender_email_id_password"]
     recipient = data["receiver_email_id"]
     message = data["message"]
-    
+    print(recipient)
     host = "smtp.gmail.com"
     port = 465
 
