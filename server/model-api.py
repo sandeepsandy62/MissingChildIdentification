@@ -13,6 +13,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from tensorflow.keras.applications.resnet50 import preprocess_input
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
+import json
+from fastapi.responses import FileResponse
+from fastapi.responses import StreamingResponse
+import base64
+from bson.json_util import dumps
+from typing import List
+from pydantic import BaseModel
+
+
 
 import smtplib
 from email.mime.text import MIMEText
@@ -57,6 +66,7 @@ db = client['authDB']
 collection_missing = db['missingFeatures']
 collection_sighted = db['sightedFeatures']
 collection_missing_children = db['missingchildren']
+
 
 # Define a function to extract the feature vector from an image
 def extract_features(image_bytes):
@@ -188,6 +198,28 @@ async def store_feature_vector(sighted_child_id: str, feature_vector: dict):
 
     # Return a success message as a response with headers
     return JSONResponse(content=encoded_object)
+
+
+
+
+class MissingChildResponseModel(BaseModel):
+    img: str
+    name: str
+    fatherName: str
+
+
+@app.get("/search-child/{name}")
+async def search_child(name: str):
+    child = collection_missing_children.find_one({"name": name})
+    if child:
+        img_data = child["img"]["data"]
+        img_base64 = base64.b64encode(img_data).decode('utf-8')
+        return MissingChildResponseModel(
+            img=img_base64,
+            name=child["name"],
+            fatherName=child["fatherName"],
+        )
+    return {"message": "Child not found"}
 
 
 

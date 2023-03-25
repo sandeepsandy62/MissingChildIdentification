@@ -240,14 +240,7 @@ app.post('/missingchild', upload.single('testImage'), async (req, res) => {
     });
 });
 
-//Sighted Feature-Vector Creation 
 
-//Missing Feature-Vector Creation
-
-
-//Match the Sighted Child with the Missing Child Database
-
-//search the status of the missing child
 
 
 
