@@ -6,5 +6,6 @@ working with images (Cloudinary & MongoDB) : https://www.youtube.com/watch?v=FsD
 Face Detection : https://medium.com/swlh/identifying-faces-with-mtcnn-and-vggface-9d0d4927cccf
 how to send mails from reat js app : https://stackoverflow.com/questions/55795125/how-to-send-email-from-my-react-web-application [NOT WORKING]
                                      https://www.geeksforgeeks.org/send-mail-gmail-account-using-python/
+VGG16 Explanation : https://medium.com/@mygreatlearning/everything-you-need-to-know-about-vgg16-7315defb5918
                                      
  

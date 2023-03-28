@@ -90,7 +90,7 @@ async def search_image(sightedChildId: str):
     for document in cursor:
         db_feature_vector = document["feature_vector"]
         similarity = np.dot(db_feature_vector, query_feature_vector) / (np.linalg.norm(db_feature_vector) * np.linalg.norm(query_feature_vector))
-        if similarity > 0.5:
+        if similarity > 0.2:
             missing_child = collection_missing_children.find_one({"_id": ObjectId(document["missing_child_id"])})
             father_email = missing_child["fatherEmail"]
             father_name = missing_child["fatherName"]

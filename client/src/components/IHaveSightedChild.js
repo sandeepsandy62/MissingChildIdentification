@@ -179,12 +179,13 @@ Team Child Chaser`;
                       sender_email_id_password: "ssjbtjqamsxmtxdl",
                       receiver_email_id: fatherEmail,
                       message: message,
-                    },{
+                    },
+                    {
                       headers: {
                         "Content-Type": "application/json",
                         "Access-Control-Allow-Origin": "*",
                       },
-                    },
+                    }
                   );
                   console.log(response.data);
                 } catch (error) {
