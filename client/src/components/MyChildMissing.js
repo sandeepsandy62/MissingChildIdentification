@@ -26,6 +26,11 @@ export default function MyChildMissing() {
   const [pincode, setPincode] = useState("");
   const [uploadMedia, setUploadMedia] = useState("");
   const [missingChildId, setMissingChildId] = useState("");
+  const [bottomWear,setBottomWear] = useState("");
+  const [topWear,setTopWear] = useState("");
+  const [mentallyIll,setMentallyIll] = useState("");
+  const [height,setHeight] = useState("");
+  const [identificationMarks,setIdentificationMarks] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -46,6 +51,11 @@ export default function MyChildMissing() {
     formData.append("address", address);
     formData.append("pincode", pincode);
     formData.append("testImage", uploadMedia);
+    formData.append("height",height);
+    formData.append("identificationMarks",identificationMarks);
+    formData.append("mentallyIll",mentallyIll);
+    formData.append("bottomWear",bottomWear);
+    formData.append("topWear",topWear);
   
     try {
       const response = await axios.post(
@@ -148,6 +158,30 @@ export default function MyChildMissing() {
                     }}
                   />
                 </Form.Group>
+                {/* Height */}
+                <Form.Group className="mb-3" controlId="height">
+                  <Form.Label>Height (in cms)</Form.Label>
+                  <Form.Control input="text"
+                  name="height"
+                  value={height}
+                    onChange={(event) => {
+                      setHeight(event.target.value);
+                    }}
+                    ></Form.Control>
+                </Form.Group>
+
+                {/* Top Wear */}
+                <Form.Group className="mb-3" controlId="topwear">
+                  <Form.Label>Top Wear</Form.Label>
+                  <Form.Control input="text" 
+                  name="topwear"
+                  value={topWear}
+                    onChange={(event) => {
+                      setTopWear(event.target.value);
+                    }}
+                  ></Form.Control>
+                </Form.Group>
+
               </Col>
               <Col md={6}>
                 {/* Gender */}
@@ -195,6 +229,64 @@ export default function MyChildMissing() {
                       setDescription(event.target.value);
                     }}
                   ></Form.Control>
+                </Form.Group>
+
+                  {/* Mentally Ill */}
+                  <Form.Group className="mb-3" controlId="mentallyIll">
+        <Form.Label>Mentally ill</Form.Label>
+        <div>
+          <Form.Check
+            inline
+            type="radio"
+            label="Yes"
+            value="yes"
+            name="mentallyIll"
+            id="mentallyIllYes"
+            checked={mentallyIll === 'yes'}
+            onChange ={ (event) => {
+              setMentallyIll(event.target.value);
+            }
+          }
+          />
+          <Form.Check
+            inline
+            type="radio"
+            label="No"
+            value="no"
+            name="mentallyIll"
+            id="mentallyIllNo"
+            checked={mentallyIll === 'no'}
+            onChange ={ (event) => {
+              setMentallyIll(event.target.value);
+            }
+          }
+          />
+        </div>
+      </Form.Group>
+
+                {/* Bottom Wear */}
+                <Form.Group className="mb-3" controlId="bottomwear">
+                  <Form.Label>Bottom Wear</Form.Label>
+                  <Form.Control 
+                  input="text"
+                   name="bottomwear"
+                   value={bottomWear}
+                    onChange={(event) => {
+                      setBottomWear(event.target.value);
+                    }}
+                   ></Form.Control>
+                </Form.Group>
+
+                {/* Identification Marks */}
+                <Form.Group className="mb-3" controlId="identificationmarks">
+                  <Form.Label>Identification Marks</Form.Label>
+                  <Form.Control input="text"
+                   name="identificationmarks"
+                   value={identificationMarks}
+                    onChange={(event) => {
+                      setIdentificationMarks(event.target.value);
+                    }}
+                   ></Form.Control>
                 </Form.Group>
               </Col>
             </Row>
@@ -297,6 +389,7 @@ export default function MyChildMissing() {
                     }}
                   />
                 </Form.Group>
+
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="address">
@@ -332,7 +425,7 @@ export default function MyChildMissing() {
             <Row>
               <Col md={12}>
                 <Alert variant="primary">
-                  Upload PNG images under 2 MB.
+                  Upload PNG / JPEG / JPG images under 2 MB.
                 </Alert>
                 <Form.Group>
                   <Form.Label>Choose a file to upload</Form.Label>

@@ -16,6 +16,11 @@ const missingChildSchema = new mongoose.Schema({
   address: { type: String, required: true },
   pincode: { type: String, required: true },
   img: { data: Buffer, contentType: String }, // Assuming `uploadMedia` is an object containing the uploaded image data.
+  height:{type: String, required: true},
+  identificationMarks:{type: String, required: true},
+  mentallyIll:{type: String, required: true},
+  bottomWear:{type: String, required: true},
+  topWear:{type: String, required: true},
 });
 
 const MissingChild = mongoose.model("MissingChild", missingChildSchema);

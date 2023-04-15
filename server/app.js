@@ -227,6 +227,11 @@ app.post('/missingchild', upload.single('testImage'), async (req, res) => {
       data: fs.readFileSync(path.join(__dirname, '/uploads/' + req.file.filename)),
       contentType: req.file.mimetype,
     },
+    height:req.body.height,
+    identificationMarks:req.body.identificationMarks,
+    mentallyIll:req.body.mentallyIll,
+    bottomWear:req.body.bottomWear,
+    topWear:req.body.topWear,
   });
 
   newMissingChild.save()
