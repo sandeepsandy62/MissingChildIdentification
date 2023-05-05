@@ -43,7 +43,7 @@ app.add_middleware(
 )
 
 
-load_dotenv() #load environment variables from .env file
+load_dotenv() #load environment variables from .env file+
 
 db_url = os.getenv("DB_URL")
 
